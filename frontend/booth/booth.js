@@ -47,6 +47,11 @@ var Photostrip = {
     this.photo.setAttribute('src', data);
 
     this.count++;
+
+    if(this.count == this.length) {
+      var data = this.canvas.toDataURL('image/png');
+      BoothClient.upload(data);
+    }
   }
 };
 
@@ -138,12 +143,20 @@ var BoothClient = {
     this.faye_client.publish('/new_booth', this.booth_id);
   },
 
+  upload(data) {
+    this.publish('upload', data).then(() => {
+      alert('uploaded');
+    }, (err) => {
+      alert(err);
+    });
+  },
+
   subscribe(route, cb) {
-    this.faye_client.subscribe('/' + this.booth_id + '/' + route, cb);
+    return this.faye_client.subscribe('/' + this.booth_id + '/' + route, cb);
   },
 
   publish(route, data) {
-    this.faye_client.publish('/' + this.booth_id + '/' + route, data);
+    return this.faye_client.publish('/' + this.booth_id + '/' + route, data);
   },
 
   _newToken(token) {
