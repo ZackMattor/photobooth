@@ -1,0 +1,28 @@
+<html>
+  <title>Arksaw | Photobooth</title>
+  <head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+    <script type="text/javascript" src="http://localhost:8000/faye/client.js"></script>
+    <script type="text/javascript" src="client.js"></script>
+  </head>
+
+  <style>
+    .state-2 {
+      display: none;
+    }
+  </style>
+  <body>
+    <div class="state-1">
+      <h1>Welcome to the photobooth client...</h1>
+      <h2>Enter the join code</h2>
+      <input class="join-token"></input>
+      <button class="submit">SUBMIT</button>
+    </div>
+
+    <div class="state-2">
+      <h1>Welcome to the photobooth client...</h1>
+      <h2>Enter the join code</h2>
+      <button class="take-picture">take picture</button>
+    </div>
+  </body>
+</html>
