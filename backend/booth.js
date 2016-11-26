@@ -23,7 +23,7 @@ Booth.prototype = BaseObject.extend({
 
       console.log(this.booth_id + ": Active join tokens");
       console.log(this.join_tokens);
-    }, 2000);
+    }, 5000);
   },
 
   disconnect() {

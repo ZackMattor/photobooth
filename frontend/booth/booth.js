@@ -11,8 +11,48 @@ var Utils = {
   }
 };
 
+var Photostrip = {
+  init() {
+    this.count = 0;
+    this.length = 4;
+
+    this.canvas = document.getElementById('canvas');
+    this.photo = document.getElementById('photo');
+
+  },
+
+  reset() {
+    this.count = 0;
+
+    if(this.width && this.height) {
+      this.context.clearRect(0, 0, this.width, this.height*this.length);
+    }
+  },
+
+  injestPicture(videoElement) {
+    if(this.count == this.length) this.reset();
+
+    if(!this.width && !this.height && !this.context) {
+      this.width = 1280;
+      this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
+
+      this.canvas.width = this.width;
+      this.canvas.height = this.height * this.length;
+      this.context = this.canvas.getContext('2d');
+    }
+
+    this.context.drawImage(videoElement, 0, this.height*this.count, this.width, this.height);
+
+    var data = this.canvas.toDataURL('image/png');
+    this.photo.setAttribute('src', data);
+
+    this.count++;
+  }
+};
+
 var Camera = {
   init() {
+    Photostrip.init();
     this.videoElement = document.querySelector('video');
     this.videoSelect = document.querySelector('select#videoSource');
 
@@ -63,11 +103,19 @@ var Camera = {
       video: {
         optional: [{
           sourceId: videoSource
-        }]
+        }],
+        mandatory: {
+          "minWidth": "500",
+          "minHeight": "500"
+        }
       }
     };
     navigator.getUserMedia(constraints, this.successCallback.bind(this), this.errorCallback.bind(this));
   },
+
+  takePicture() {
+    Photostrip.injestPicture(this.videoElement);
+  }
 };
 
 var BoothClient = {
@@ -103,13 +151,14 @@ var BoothClient = {
   },
 
   _takePicture() {
-    alert('WOWOWOWOW - TAKE PIC');
+    Camera.takePicture();
   },
 
   _pong() {
-    console.log('pong');
-    this.publish('/' + this.booth_id + '/pong', null);
+    this.publish('pong', null);
   }
 };
 
-BoothClient.init();
+$(function() {
+  BoothClient.init();
+});

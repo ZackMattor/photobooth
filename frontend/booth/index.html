@@ -33,6 +33,22 @@
       .camera-preview video {
         width: 100%;
       }
+
+      #canvas {
+        display: none;
+      }
+
+      .preview-container {
+        position: absolute;
+        z-index: 20;
+        right: 0;
+        top: 0;
+      }
+
+      .preview-container img {
+        width: 200px;
+        border: 1px solid white;
+      }
     </style>
   </head>
   <body>
@@ -50,6 +66,15 @@
         </div>
       </div>
     </div>
+
+    <div class="preview-container">
+      <div class="preview">
+        <img id="photo">
+      </div>
+    </div>
+
+    <canvas id="canvas">
+    </canvas>
     <script type="text/javascript" src="booth.js"></script>
   </body>
 </html>
