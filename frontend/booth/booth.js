@@ -26,6 +26,8 @@ var Photostrip = {
 
     if(this.width && this.height) {
       this.context.clearRect(0, 0, this.width, this.height*this.length);
+      var data = this.canvas.toDataURL('image/png');
+      this.photo.setAttribute('src', data);
     }
   },
 
@@ -145,7 +147,7 @@ var BoothClient = {
 
   upload(data) {
     this.publish('upload', data).then(() => {
-      alert('uploaded');
+      Photostrip.reset();
     }, (err) => {
       alert(err);
     });
