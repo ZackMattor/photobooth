@@ -23,6 +23,10 @@ client.subscribe('/' + client_id + '/kick', function(message) {
   alert('Someone else took over...');
 });
 
+client.subscribe('/' + client_id + '/picture', function(url) {
+  $('.photostrip-preview img').attr('src', url);
+});
+
 client.subscribe('/' + client_id + '/connected', function(message) {
   $('.state-1').hide();
   $('.state-2').show();

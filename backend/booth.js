@@ -53,8 +53,12 @@ Booth.prototype = BaseObject.extend({
 
       mkdirp.sync(path);
 
-      gm(buf, 'image.png').write(path + '/' + this.count + '.jpg', (err) => {
+      var count = this.count;
+
+      gm(buf, 'image.png').write(path + '/' + count + '.jpg', (err) => {
         if(err) console.log(err);
+
+        this.client.pushImage("https://phobooth.pics/images/" + this.booth_id + '/' + count + '.jpg');
       });
 
       this.count++;
