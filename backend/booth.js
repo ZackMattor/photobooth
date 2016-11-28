@@ -2,9 +2,11 @@ var BaseObject = require('./base');
 var Client = require('./client');
 gm = require('gm').subClass({imageMagick: true});
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 
 var Booth = function(faye_client, booth_id) {
   this.events = {};
+  this.count = 1;
   this.booth_id = booth_id;
   this.faye_client = faye_client;
   this.heartbeat_interval = null;
@@ -47,16 +49,15 @@ Booth.prototype = BaseObject.extend({
       var base64Data = data.replace(/^data:image\/png;base64,/, "");
       var buf = new Buffer(base64Data, 'base64');
 
-      var path = 'images/' + this.booth_id
+      var path = './images/' + this.booth_id;
 
-      if(!fs.existsSync(path)) {
-        fs.mkdirSync(path);
-      }
+      mkdirp.sync(path);
 
-      gm(buf, 'image.png')
-        .write(path + '/foo.jpg', (err) => {
-          console.log(err);
-        });
+      gm(buf, 'image.png').write(path + '/' + this.count + '.jpg', (err) => {
+        if(err) console.log(err);
+      });
+
+      this.count++;
     });
   },
 
