@@ -126,7 +126,7 @@ var Camera = {
 
 var BoothClient = {
   init() {
-    this.faye_client = new Faye.Client('http://localhost:8000');
+    this.faye_client = new Faye.Client(location.origin + '/faye');
     this.booth_id = Utils.uuid();
 
     Camera.init();

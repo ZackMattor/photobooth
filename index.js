@@ -4,18 +4,22 @@ var faye    = require('faye');
 var BoothManager = require('./backend/booth_manager');
 
 var app = express();
+var server = http.createServer(app);
+var bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
+
+bayeux.attach(server);
 
 app.use('/booth', express.static('frontend/booth'));
 app.use('/', express.static('frontend/client'));
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+
+app.use(function(err, req, res, next){
+    console.error(err.stack);
+    res.send(500);
 });
 
-var server = http.createServer();
-var bayeux = new faye.NodeAdapter({mount: '/'});
-
-bayeux.attach(server);
-server.listen(8000);
+server.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
 
 BoothManager.init(bayeux.getClient());

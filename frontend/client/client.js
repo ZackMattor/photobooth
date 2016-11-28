@@ -11,7 +11,7 @@ var Utils = {
   }
 };
 
-var client = new Faye.Client('http://localhost:8000');
+var client = new Faye.Client(location.origin + '/faye');
 var client_id = Utils.uuid();
 
 client.subscribe('/' + client_id + '/ping', function(message) {
