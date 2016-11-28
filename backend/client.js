@@ -15,11 +15,8 @@ var Client = function(faye_client, client_id) {
 
 Client.prototype = BaseObject.extend({
   disconnect() {
-    console.log('wat');
-    this.faye_client.unsubscribe('/' + client_id + '/take_picture');
-    console.log('foo');
+    this.faye_client.unsubscribe('/' + this.client_id + '/take_picture');
     this.off_all();
-    console.log('bar');
     this.trigger('kick');
   }
 });

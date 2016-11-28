@@ -1,10 +1,15 @@
 <html>
   <title>Arksaw | Photobooth</title>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script type="text/javascript" src="/faye/client.js"></script>
 
     <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+
       .hud-container {
         position: absolute;
         top: 10px;
@@ -14,12 +19,22 @@
 
       .hud {
         margin: 0 auto;
-        width: 500px;
-        color: #ddd;
+        width: 300px;
+        color: #ccc;
         padding: 10px;
-        border: 2px solid white;
-        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid #ccc;
+        background: rgba(0, 0, 0, 0.6);
         text-align: center;
+      }
+
+      .hud .join-token {
+        font-size: 45px;
+        font-weight: lighter;
+      }
+
+      .hud h2 {
+        margin: 0;
+        font-weight: lighter;
       }
 
       .camera-preview {
@@ -42,12 +57,13 @@
         position: absolute;
         z-index: 20;
         right: 0;
-        top: 0;
+        top: 25%;
       }
 
       .preview-container img {
-        width: 200px;
+        height: 50%;
         border: 1px solid white;
+        margin-right: 15px;
       }
     </style>
   </head>
@@ -56,14 +72,18 @@
       <video muted autoplay></video>
     </div>
 
-    <div class="hud-container">
-      <div class="hud">
-        <h2>http://booth.zmattor.me/</h2>
-        <div class="join-token">XXXX</div>
-
+    <div class="settings-container">
+      <div class="settings">
         <div class="select">
           <label for="videoSource">Video source: </label><select id="videoSource"></select>
         </div>
+      </div>
+    </div>
+
+    <div class="hud-container">
+      <div class="hud">
+        <div class="join-token">XXXX</div>
+        <h2>https://phobooth.pics</h2>
       </div>
     </div>
 
