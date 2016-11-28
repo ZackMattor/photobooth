@@ -11,7 +11,6 @@ var Client = function(faye_client, client_id) {
   });
 
   this.startHeartbeat(client_id);
-  this.disconnect();
 };
 
 Client.prototype = BaseObject.extend({

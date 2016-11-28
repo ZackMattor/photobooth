@@ -1,10 +1,14 @@
 var extend = require('extend');
 
-var BaseObject = {
+var BaseObject = function() {};
+
+BaseObject.prototype = {
   on(event_name, callback) {
     if(!this._populated(event_name)) this.events[event_name] = [];
 
+    console.log(event_name);
     this.events[event_name].push(callback);
+    console.log('fooooo');
   },
 
   off(event_name, callback) {
@@ -54,6 +58,6 @@ var BaseObject = {
 
 module.exports = {
   extend(obj) {
-    return extend(false, BaseObject, obj);
+    return extend(false, new BaseObject(), obj);
   }
 };

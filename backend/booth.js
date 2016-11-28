@@ -1,5 +1,7 @@
 var BaseObject = require('./base');
 var Client = require('./client');
+gm = require('gm').subClass({imageMagick: true});
+var fs = require('fs');
 
 var Booth = function(faye_client, booth_id) {
   this.events = {};
@@ -9,6 +11,7 @@ var Booth = function(faye_client, booth_id) {
   this.token_interval = null;
   this.join_tokens = [];
 
+  this.listenForUpload();
   this.startHeartbeat(booth_id);
   this.startJoinTokenGeneration();
 };
@@ -27,6 +30,7 @@ Booth.prototype = BaseObject.extend({
   },
 
   disconnect() {
+    console.log('disconnect callback');
     console.log(this.booth_id + ': DISCONNECTING');
     clearInterval(this.heartbeat_interval);
     clearInterval(this.token_interval);
@@ -38,6 +42,24 @@ Booth.prototype = BaseObject.extend({
     return (this.join_tokens.indexOf(token) !== -1)
   },
 
+  listenForUpload() {
+    this.faye_client.subscribe('/' + this.booth_id + '/upload', (data) => {
+      var base64Data = data.replace(/^data:image\/png;base64,/, "");
+      var buf = new Buffer(base64Data, 'base64');
+
+      var path = 'images/' + this.booth_id
+
+      if(!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+      }
+
+      gm(buf, 'image.png')
+        .write(path + '/foo.jpg', (err) => {
+          console.log(err);
+        });
+    });
+  },
+
   newClient(client_id) {
     console.log(this.client);
     if(this.client) this.client.disconnect();
@@ -45,9 +67,11 @@ Booth.prototype = BaseObject.extend({
     console.log('adding new client to booth - ' + this.booth_id);
     this.client = new Client(this.faye_client, client_id);
 
+    console.log('THERE WE GO!');
     this.client.on('take_picture', () => {
       this.faye_client.publish('/' + this.booth_id + '/take_picture', null);
     });
+    console.log('THERE WE GO!');
   }
 });
 

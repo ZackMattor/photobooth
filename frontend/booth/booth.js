@@ -18,7 +18,6 @@ var Photostrip = {
 
     this.canvas = document.getElementById('canvas');
     this.photo = document.getElementById('photo');
-
   },
 
   reset() {
