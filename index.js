@@ -10,8 +10,8 @@ var bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
 bayeux.attach(server);
 
 app.use('/booth', express.static('frontend/booth'));
+app.use('/images', express.static('images'));
 app.use('/', express.static('frontend/client'));
-
 
 app.use(function(err, req, res, next){
     console.error(err.stack);
