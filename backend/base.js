@@ -25,15 +25,15 @@ BaseObject.prototype = {
     this.events = {};
   },
 
-  startHeartbeat(id) {
+  startHeartbeat() {
     var count = 0;
 
-    this.faye_client.subscribe('/' + id + '/pong', () => {
+    this.subscribe('/pong', () => {
       count = 0;
     });
 
     this.heartbeat_interval = setInterval(() => {
-      this.faye_client.publish('/' + id + '/ping', null);
+      this.publish('/ping', null);
       count++;
 
       if(count > 5) { this._disconnect(); }
@@ -54,11 +54,21 @@ BaseObject.prototype = {
   },
 
   publish(route, data) {
-    if(!this.faye_namepsace) console.error('NO NAMESPACE SET');
+    this.faye_client.publish(this._fayeRoute(route), data);
   },
 
   subscribe(route, cb) {
-    if(!this.faye_namepsace) console.error('NO NAMESPACE SET');
+    this.faye_client.subscribe(this._fayeRoute(route), cb);
+  },
+
+  unsubscribe(route) {
+    this.faye_client.unsubscribe(this._fayeRoute(route));
+  },
+
+  _fayeRoute(route) {
+    if(!this.faye_namespace) console.error('NO NAMESPACE SET');
+
+    return '/' + this.faye_namespace + route;
   },
 
   _populated(event_name) {

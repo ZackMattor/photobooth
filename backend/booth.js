@@ -14,7 +14,7 @@ var Booth = function(faye_client, booth_id) {
   this.join_tokens = [];
 
   this.listenForUpload();
-  this.startHeartbeat(booth_id);
+  this.startHeartbeat();
   this.startJoinTokenGeneration();
 };
 
@@ -22,7 +22,7 @@ Booth.prototype = BaseObject.extend({
   startJoinTokenGeneration() {
     this.token_interval = setInterval(() => {
       var token = parseInt(Math.random() * (9999-1000) + 1000);
-      this.faye_client.publish('/' + this.booth_id + '/new_join_token', token);
+      this.publish('/new_join_token', token);
       this.join_tokens.push(token);
       this.join_tokens = this.join_tokens.slice(-5);
 
@@ -42,7 +42,7 @@ Booth.prototype = BaseObject.extend({
   },
 
   listenForUpload() {
-    this.faye_client.subscribe('/' + this.booth_id + '/upload', (data) => {
+    this.subscribe('/upload', (data) => {
       var base64Data = data.replace(/^data:image\/png;base64,/, "");
       var buf = new Buffer(base64Data, 'base64');
 
@@ -71,7 +71,7 @@ Booth.prototype = BaseObject.extend({
 
     console.log('THERE WE GO!');
     this.client.on('take_picture', () => {
-      this.faye_client.publish('/' + this.booth_id + '/take_picture', null);
+      this.publish('/take_picture', null);
     });
     console.log('THERE WE GO!');
   }
