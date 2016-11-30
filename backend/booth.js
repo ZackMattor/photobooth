@@ -5,16 +5,16 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 
 var Booth = function(faye_client, booth_id) {
-  this.setNamespace(booth_id);
-  this.events = {};
+  this.baseInit({
+    id: booth_id,
+    faye_client: faye_client
+  });
+
   this.count = 1;
-  this.booth_id = booth_id;
-  this.faye_client = faye_client;
   this.token_interval = null;
   this.join_tokens = [];
 
   this.listenForUpload();
-  this.startHeartbeat();
   this.startJoinTokenGeneration();
 };
 
@@ -26,14 +26,14 @@ Booth.prototype = BaseObject.extend({
       this.join_tokens.push(token);
       this.join_tokens = this.join_tokens.slice(-5);
 
-      console.log(this.booth_id + ": Active join tokens");
+      console.log(this.id + ": Active join tokens");
       console.log(this.join_tokens);
     }, 5000);
   },
 
   disconnect() {
     console.log('disconnect callback');
-    console.log(this.booth_id + ': DISCONNECTING');
+    console.log(this.id + ': DISCONNECTING');
     clearInterval(this.token_interval);
   },
 
@@ -46,7 +46,7 @@ Booth.prototype = BaseObject.extend({
       var base64Data = data.replace(/^data:image\/png;base64,/, "");
       var buf = new Buffer(base64Data, 'base64');
 
-      var path = './images/' + this.booth_id;
+      var path = './images/' + this.id;
 
       mkdirp.sync(path);
 
@@ -55,7 +55,7 @@ Booth.prototype = BaseObject.extend({
       gm(buf, 'image.png').write(path + '/' + count + '.jpg', (err) => {
         if(err) console.log(err);
 
-        this.client.pushImage("/images/" + this.booth_id + '/' + count + '.jpg');
+        this.client.pushImage("/images/" + this.id + '/' + count + '.jpg');
       });
 
       this.count++;
@@ -66,14 +66,12 @@ Booth.prototype = BaseObject.extend({
     console.log(this.client);
     if(this.client) this.client._disconnect();
 
-    console.log('adding new client to booth - ' + this.booth_id);
+    console.log('adding new client to booth - ' + this.id);
     this.client = new Client(this.faye_client, client_id);
 
-    console.log('THERE WE GO!');
     this.client.on('take_picture', () => {
       this.publish('/take_picture', null);
     });
-    console.log('THERE WE GO!');
   }
 });
 

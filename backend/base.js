@@ -1,8 +1,16 @@
 var extend = require('extend');
 
-var BaseObject = function() {};
+var BaseObject = function() { };
 
 BaseObject.prototype = {
+  baseInit(opts) {
+    this.id = opts.id;
+    this.faye_client = opts.faye_client;
+    this.events = {};
+
+    this.startHeartbeat();
+  },
+
   on(event_name, callback) {
     if(!this._populated(event_name)) this.events[event_name] = [];
 
@@ -49,10 +57,6 @@ BaseObject.prototype = {
     });
   },
 
-  setNamespace(namespace) {
-    this.faye_namespace = namespace;
-  },
-
   publish(route, data) {
     this.faye_client.publish(this._fayeRoute(route), data);
   },
@@ -66,9 +70,9 @@ BaseObject.prototype = {
   },
 
   _fayeRoute(route) {
-    if(!this.faye_namespace) console.error('NO NAMESPACE SET');
+    if(!this.id) console.error('NO ID SET');
 
-    return '/' + this.faye_namespace + route;
+    return '/' + this.id + route;
   },
 
   _populated(event_name) {

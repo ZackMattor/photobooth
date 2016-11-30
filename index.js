@@ -27,8 +27,8 @@ xps.get('/booth', function(req, res) {
 });
 
 xps.use(function(err, req, res, next){
-    console.error(err.stack);
-    res.send(500);
+  console.error(err.stack);
+  res.send(500);
 });
 
 var server = http.createServer(xps);

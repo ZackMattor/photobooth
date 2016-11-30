@@ -1,10 +1,10 @@
 var BaseObject = require('./base');
 
 var Client = function(faye_client, client_id) {
-  this.setNamespace(client_id);
-  this.events = {};
-  this.faye_client = faye_client;
-  this.client_id = client_id;
+  this.baseInit({
+    id: client_id,
+    faye_client: faye_client
+  });
 
   this.publish('/connected', null);
 
