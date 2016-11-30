@@ -6,9 +6,7 @@ BaseObject.prototype = {
   on(event_name, callback) {
     if(!this._populated(event_name)) this.events[event_name] = [];
 
-    console.log(event_name);
     this.events[event_name].push(callback);
-    console.log('fooooo');
   },
 
   off(event_name, callback) {
@@ -38,7 +36,7 @@ BaseObject.prototype = {
       this.faye_client.publish('/' + id + '/ping', null);
       count++;
 
-      if(count > 5) { this.disconnect(); }
+      if(count > 5) { this._disconnect(); }
     }, 500);
   },
 
@@ -51,8 +49,26 @@ BaseObject.prototype = {
     });
   },
 
+  setNamespace(namespace) {
+    this.faye_namespace = namespace;
+  },
+
+  publish(route, data) {
+    if(!this.faye_namepsace) console.error('NO NAMESPACE SET');
+  },
+
+  subscribe(route, cb) {
+    if(!this.faye_namepsace) console.error('NO NAMESPACE SET');
+  },
+
   _populated(event_name) {
     return Array.isArray(this.events[event_name]);
+  },
+
+  _disconnect() {
+    this.trigger('disconnect', this);
+    clearInterval(this.heartbeat_interval);
+    this.disconnect();
   }
 };
 

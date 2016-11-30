@@ -5,11 +5,11 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 
 var Booth = function(faye_client, booth_id) {
+  this.setNamespace(booth_id);
   this.events = {};
   this.count = 1;
   this.booth_id = booth_id;
   this.faye_client = faye_client;
-  this.heartbeat_interval = null;
   this.token_interval = null;
   this.join_tokens = [];
 
@@ -34,10 +34,7 @@ Booth.prototype = BaseObject.extend({
   disconnect() {
     console.log('disconnect callback');
     console.log(this.booth_id + ': DISCONNECTING');
-    clearInterval(this.heartbeat_interval);
     clearInterval(this.token_interval);
-
-    this.trigger('disconnect', this);
   },
 
   tokenValid(token) {
@@ -58,7 +55,7 @@ Booth.prototype = BaseObject.extend({
       gm(buf, 'image.png').write(path + '/' + count + '.jpg', (err) => {
         if(err) console.log(err);
 
-        this.client.pushImage("https://phobooth.pics/images/" + this.booth_id + '/' + count + '.jpg');
+        this.client.pushImage("/images/" + this.booth_id + '/' + count + '.jpg');
       });
 
       this.count++;
@@ -67,7 +64,7 @@ Booth.prototype = BaseObject.extend({
 
   newClient(client_id) {
     console.log(this.client);
-    if(this.client) this.client.disconnect();
+    if(this.client) this.client._disconnect();
 
     console.log('adding new client to booth - ' + this.booth_id);
     this.client = new Client(this.faye_client, client_id);

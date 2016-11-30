@@ -16,6 +16,7 @@ xps.set('views', __dirname + '/app/views/');
 console.log(__dirname);
 
 xps.use('/assets', express.static('app/assets'));
+xps.use('/images', express.static('images'));
 
 xps.get('/', function(req, res) {
   res.render('client');
