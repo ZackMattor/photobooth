@@ -87,14 +87,8 @@ BaseObject.prototype = {
     });
 
     scope.on('_proxy', (proxy_info) => {
-      console.log('we getting here?!?!?!');
-      console.log(this.proxies);
-      console.log(proxy_info);
-      console.log(this.proxies[proxy_info.id]);
-
       if(this.proxies[proxy_info.id]) return;
 
-      console.log('PASSING PROXY ALONG ');
       console.log(proxy_info);
 
       this.publish(proxy_info.route, proxy_info);
@@ -104,6 +98,7 @@ BaseObject.prototype = {
       if(!this.proxies[proxy_info.id]) return;
 
       proxy_info = this.proxies[proxy_info.id];
+
       this.publish(proxy_info.route + '_reciept', proxy_info.data);
     });
   },
