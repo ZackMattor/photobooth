@@ -17,7 +17,6 @@ Client.prototype = BaseObject.extend({
   disconnect() {
     this.unsubscribe('/take_picture');
     this.off_all();
-    this.trigger('kick');
   },
 
   pushImage(url) {
