@@ -11,8 +11,6 @@ var Client = function(faye_client, client_id) {
   this.proxy('/take_picture', () => {
     console.log('ASDFASFASDFASDFASDFASDFASDF');
   });
-
-  this.startHeartbeat();
 };
 
 Client.prototype = BaseObject.extend({
