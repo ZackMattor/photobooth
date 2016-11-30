@@ -69,9 +69,9 @@ Booth.prototype = BaseObject.extend({
     console.log('adding new client to booth - ' + this.id);
     this.client = new Client(this.faye_client, client_id);
 
-    this.client.on('take_picture', () => {
-      this.publish('/take_picture', null);
-    });
+    // setup our bi-directional proxy
+    this._setupProxy(this.client);
+    this.client._setupProxy(this);
   }
 });
 

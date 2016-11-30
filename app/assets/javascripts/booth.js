@@ -135,9 +135,9 @@ var BoothClient = {
   },
 
   setupSubscriptions() {
-    this.subscribe('take_picture', this._takePicture.bind(this));
-    this.subscribe('new_join_token', this._newToken.bind(this));
-    this.subscribe('ping', this._pong.bind(this));
+    this.subscribe_with_reciept('/take_picture', null, this._takePicture.bind(this));
+    this.subscribe('/new_join_token', this._newToken.bind(this));
+    this.subscribe('/ping', this._pong.bind(this));
   },
 
   tellServerWeExist() {
@@ -153,23 +153,42 @@ var BoothClient = {
   },
 
   subscribe(route, cb) {
-    return this.faye_client.subscribe('/' + this.booth_id + '/' + route, cb);
+    return this.faye_client.subscribe('/' + this.booth_id + route, cb);
+  },
+
+  subscribe_with_reciept(route, reciept_data, cb) {
+    return this.subscribe(route, (data) => {
+      console.log('WOW, WHAT THE HECK>!?!?!?!');
+
+      var done = function() {
+        this.publish('/proxy_reciept', {
+          route: data.route,
+          data: reciept_data,
+          id: data.id
+        });
+      }.bind(this);
+
+      cb(data.data, done);
+    });
   },
 
   publish(route, data) {
-    return this.faye_client.publish('/' + this.booth_id + '/' + route, data);
+    return this.faye_client.publish('/' + this.booth_id + route, data);
   },
 
   _newToken(token) {
     $('.join-token').html(token);
   },
 
-  _takePicture() {
-    Camera.takePicture();
+  _takePicture(data, receipt) {
+    setTimeout(() => {
+      Camera.takePicture();
+      receipt();
+    }, 3000);
   },
 
   _pong() {
-    this.publish('pong', null);
+    this.publish('/pong', null);
   }
 };
 

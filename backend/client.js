@@ -8,8 +8,8 @@ var Client = function(faye_client, client_id) {
 
   this.publish('/connected', null);
 
-  this.subscribe('/take_picture', () => {
-    this.trigger('take_picture');
+  this.proxy('/take_picture', () => {
+    console.log('ASDFASFASDFASDFASDFASDFASDF');
   });
 
   this.startHeartbeat();
