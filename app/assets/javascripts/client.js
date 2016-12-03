@@ -37,7 +37,6 @@ client.subscribe('/' + client_id + '/kick', function(message) {
 });
 
 client.subscribe('/' + client_id + '/picture', function(url) {
-  debugger;
   $('.photostrip-preview img').attr('src', url);
 });
 
