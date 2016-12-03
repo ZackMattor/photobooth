@@ -69,7 +69,9 @@ BaseObject.prototype = {
   proxy(route, cb) {
     var id = this.uuid();
 
-    this.proxies[id] = true;
+    this.proxies[id] = {
+      route: route
+    };
 
     this.subscribe(route, (data) => {
       this.trigger('_proxy', {
@@ -99,7 +101,7 @@ BaseObject.prototype = {
 
       proxy_info = this.proxies[proxy_info.id];
 
-      this.publish(proxy_info.route + '_reciept', proxy_info.data);
+      this.publish(proxy_info.route + '_reciept', 'data');
     });
   },
 
