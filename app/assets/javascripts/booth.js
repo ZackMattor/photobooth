@@ -149,7 +149,7 @@ var BoothClient = {
   },
 
   upload(data) {
-    this.publish('upload', data).then(() => {
+    this.publish('/upload', data).then(() => {
       this.renderCountdown(0);
       Photostrip.reset();
     }, (err) => {
