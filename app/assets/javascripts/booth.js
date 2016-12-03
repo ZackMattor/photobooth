@@ -33,26 +33,30 @@ var Photostrip = {
   injestPicture(videoElement) {
     if(this.count == this.length) this.reset();
 
-    if(!this.width && !this.height && !this.context) {
-      this.width = 1280;
-      this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
+    if(this.count+1 == this.length) BoothClient.renderCountdown('uploading..');
 
-      this.canvas.width = this.width;
-      this.canvas.height = this.height * this.length;
-      this.context = this.canvas.getContext('2d');
-    }
+    setTimeout(() => {
+      if(!this.width && !this.height && !this.context) {
+        this.width = 1280;
+        this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
 
-    this.context.drawImage(videoElement, 0, this.height*this.count, this.width, this.height);
+        this.canvas.width = this.width;
+        this.canvas.height = this.height * this.length;
+        this.context = this.canvas.getContext('2d');
+      }
 
-    var data = this.canvas.toDataURL('image/png');
-    this.photo.setAttribute('src', data);
+      this.context.drawImage(videoElement, 0, this.height*this.count, this.width, this.height);
 
-    this.count++;
-
-    if(this.count == this.length) {
       var data = this.canvas.toDataURL('image/png');
-      BoothClient.upload(data);
-    }
+      this.photo.setAttribute('src', data);
+
+      this.count++;
+
+      if(this.count == this.length) {
+        var data = this.canvas.toDataURL('image/png');
+        BoothClient.upload(data);
+      }
+    }, 50);
   }
 };
 
@@ -146,6 +150,7 @@ var BoothClient = {
 
   upload(data) {
     this.publish('upload', data).then(() => {
+      this.renderCountdown(0);
       Photostrip.reset();
     }, (err) => {
       alert(err);
@@ -181,14 +186,35 @@ var BoothClient = {
   },
 
   _takePicture(data, receipt) {
-    setTimeout(() => {
-      Camera.takePicture();
-      receipt();
-    }, 3000);
+    var count = 3;
+    console.log('taking pic');
+
+    this.renderCountdown(count)
+
+    var countdown = setInterval(() => {
+      count--;
+      console.log(count);
+
+      this.renderCountdown(count)
+
+      if(count == 0) {
+        this.renderCountdown(0)
+        clearInterval(countdown);
+        Camera.takePicture();
+        receipt();
+      }
+    }, 1000);
   },
 
   _pong() {
     this.publish('/pong', null);
+  },
+
+  renderCountdown(num) {
+    $('.countdown div div').html(num);
+
+    var val = num == 0 ? 'none' : 'table';
+    $('.countdown').css('display', val);
   }
 };
 
