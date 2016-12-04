@@ -216,7 +216,7 @@ var BoothClient = {
   },
 
   renderCountdown(num) {
-    $('.countdown div div').html(num);
+    $('.countdown div div').html(num == 1 ? 'Say Cheese!' : num);
 
     var val = num == 0 ? 'none' : 'table';
     $('.countdown').css('display', val);
