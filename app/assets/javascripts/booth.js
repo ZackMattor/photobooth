@@ -24,7 +24,7 @@ var Photostrip = {
     this.count = 0;
 
     if(this.width && this.height) {
-      this.context.clearRect(0, 0, this.width, this.height*this.length);
+      this.context.drawImage(window.frameImage, 0, 0, this.canvas.width, this.canvas.height);
       var data = this.canvas.toDataURL('image/png');
       this.photo.setAttribute('src', data);
     }

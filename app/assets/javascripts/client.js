@@ -37,7 +37,9 @@ client.subscribe('/' + client_id + '/kick', function(message) {
 });
 
 client.subscribe('/' + client_id + '/picture', function(url) {
+  $('.photostrip-preview').show();
   $('.photostrip-preview img').attr('src', url);
+  $('.photostrip-preview a').attr('href', url);
 });
 
 client.subscribe('/' + client_id + '/connected', function(message) {
