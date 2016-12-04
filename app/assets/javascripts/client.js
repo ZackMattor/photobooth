@@ -8,6 +8,19 @@ var Utils = {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
         return v.toString(16);
     });
+  },
+
+  publishWithReciept(route, data) {
+    return new Promise((resolve) => {
+      console.log('sub to '+ route + '_reciept');
+      client.subscribe(route + '_reciept', () => {
+        $('.take-picture').removeClass('disabled');
+
+        resolve();
+      });
+
+      client.publish(route, data)
+    });
   }
 };
 
@@ -24,7 +37,9 @@ client.subscribe('/' + client_id + '/kick', function(message) {
 });
 
 client.subscribe('/' + client_id + '/picture', function(url) {
+  $('.photostrip-preview').show();
   $('.photostrip-preview img').attr('src', url);
+  $('.photostrip-preview a').attr('href', url);
 });
 
 client.subscribe('/' + client_id + '/connected', function(message) {
@@ -40,8 +55,10 @@ $(function() {
     });
   });
 
-  $('.take-picture').click(() => {
-    console.log('take pic');
-    client.publish('/' + client_id + '/take_picture', 1);
+  $('.take-picture').click((e) => {
+    if($(e.currentTarget).hasClass('disabled')) return;
+
+    $(e.currentTarget).addClass('disabled');
+    Utils.publishWithReciept('/' + client_id + '/take_picture', 1).then();
   });
 });

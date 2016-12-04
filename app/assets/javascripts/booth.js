@@ -24,7 +24,7 @@ var Photostrip = {
     this.count = 0;
 
     if(this.width && this.height) {
-      this.context.clearRect(0, 0, this.width, this.height*this.length);
+      this.context.drawImage(window.frameImage, 0, 0, this.canvas.width, this.canvas.height);
       var data = this.canvas.toDataURL('image/png');
       this.photo.setAttribute('src', data);
     }
@@ -33,26 +33,35 @@ var Photostrip = {
   injestPicture(videoElement) {
     if(this.count == this.length) this.reset();
 
-    if(!this.width && !this.height && !this.context) {
-      this.width = 1280;
-      this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
+    if(this.count+1 == this.length) BoothClient.renderCountdown('uploading..');
 
-      this.canvas.width = this.width;
-      this.canvas.height = this.height * this.length;
-      this.context = this.canvas.getContext('2d');
-    }
+    setTimeout(() => {
+      if(!this.width && !this.height && !this.context) {
+        this.width = 1280;
+        this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
 
-    this.context.drawImage(videoElement, 0, this.height*this.count, this.width, this.height);
+        this.canvas.width = this.width + 80;
+        this.canvas.height = this.height * this.length + 1200;
 
-    var data = this.canvas.toDataURL('image/png');
-    this.photo.setAttribute('src', data);
+        this.context = this.canvas.getContext('2d');
 
-    this.count++;
+        this.context.drawImage(window.frameImage, 0, 0, this.canvas.width, this.canvas.height);
+      }
 
-    if(this.count == this.length) {
+      var gutter = 45;
+
+      this.context.drawImage(videoElement, 40, 50+this.height*this.count + (gutter * this.count), this.width, this.height);
+
       var data = this.canvas.toDataURL('image/png');
-      BoothClient.upload(data);
-    }
+      this.photo.setAttribute('src', data);
+
+      this.count++;
+
+      if(this.count == this.length) {
+        var data = this.canvas.toDataURL('image/png');
+        BoothClient.upload(data);
+      }
+    }, 50);
   }
 };
 
@@ -135,9 +144,9 @@ var BoothClient = {
   },
 
   setupSubscriptions() {
-    this.subscribe('take_picture', this._takePicture.bind(this));
-    this.subscribe('new_join_token', this._newToken.bind(this));
-    this.subscribe('ping', this._pong.bind(this));
+    this.subscribe_with_reciept('/take_picture', null, this._takePicture.bind(this));
+    this.subscribe('/new_join_token', this._newToken.bind(this));
+    this.subscribe('/ping', this._pong.bind(this));
   },
 
   tellServerWeExist() {
@@ -145,7 +154,8 @@ var BoothClient = {
   },
 
   upload(data) {
-    this.publish('upload', data).then(() => {
+    this.publish('/upload', data).then(() => {
+      this.renderCountdown(0);
       Photostrip.reset();
     }, (err) => {
       alert(err);
@@ -153,26 +163,71 @@ var BoothClient = {
   },
 
   subscribe(route, cb) {
-    return this.faye_client.subscribe('/' + this.booth_id + '/' + route, cb);
+    return this.faye_client.subscribe('/' + this.booth_id + route, cb);
+  },
+
+  subscribe_with_reciept(route, reciept_data, cb) {
+    return this.subscribe(route, (data) => {
+      console.log('WOW, WHAT THE HECK>!?!?!?!');
+
+      var done = function() {
+        this.publish('/proxy_reciept', {
+          route: data.route,
+          data: reciept_data,
+          id: data.id
+        });
+      }.bind(this);
+
+      cb(data.data, done);
+    });
   },
 
   publish(route, data) {
-    return this.faye_client.publish('/' + this.booth_id + '/' + route, data);
+    return this.faye_client.publish('/' + this.booth_id + route, data);
   },
 
   _newToken(token) {
     $('.join-token').html(token);
   },
 
-  _takePicture() {
-    Camera.takePicture();
+  _takePicture(data, receipt) {
+    var count = 3;
+    console.log('taking pic');
+
+    this.renderCountdown(count)
+
+    var countdown = setInterval(() => {
+      count--;
+      console.log(count);
+
+      this.renderCountdown(count)
+
+      if(count == 0) {
+        this.renderCountdown(0)
+        clearInterval(countdown);
+        Camera.takePicture();
+        receipt();
+      }
+    }, 1000);
   },
 
   _pong() {
-    this.publish('pong', null);
+    this.publish('/pong', null);
+  },
+
+  renderCountdown(num) {
+    $('.countdown div div').html(num);
+
+    var val = num == 0 ? 'none' : 'table';
+    $('.countdown').css('display', val);
   }
 };
 
 $(function() {
-  BoothClient.init();
+  window.frameImage = new Image();
+
+  window.frameImage.src = "/assets/images/frame.jpg";
+  window.frameImage.onload = function() {
+    BoothClient.init();
+  };
 });

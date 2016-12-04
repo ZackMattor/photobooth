@@ -1,0 +1,123 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #197D7B;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.photostrip-preview {
+  display: none;
+  text-align: center;
+}
+
+.photostrip-preview img {
+  margin: 10px 0;
+  margin-top: 0;
+  width: 80%;
+}
+
+.photostrip-preview a {
+  display: block;
+  color: white;
+  width: 80%;
+  margin: 40px auto;
+  margin-bottom: 0;
+  border: 1px solid white;
+  padding: 20px;
+  background-color: rgb(0, 67, 150);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  color: black;
+  padding: 5px;
+  background-color: #ccc;
+}
+
+.photostrip-preview input {
+  margin-top: 30px;
+  text-align: center;
+  width: 80%;
+}
+
+.title {
+  color: white;
+  font-size: 40px;
+  text-align: center;
+  padding: 15px;
+  font-weight: lighter;
+  background: #DE572F;
+  border-bottom: 2px solid white;
+}
+
+.join-token-container {
+  width: 75%;
+  margin: 0 auto;
+  background: rgb(65, 152, 151);
+  border-radius: 15px;
+  border: 1px solid white;
+  padding: 20px;
+  margin-top: 30px;
+  text-align: center;
+  color: white;
+}
+
+.join-token-container input {
+  width: 63%;
+  outline: 0;
+  padding: 2px;
+  text-align: center;
+  font-size: 38px;
+  background: #fff;
+  color: #555;
+  border: 1px solid black;
+  border-bottom: none;
+}
+
+.join-token-container h2 {
+  margin-top: 0;
+  font-weight: lighter;
+}
+
+.submit {
+  width: 63%;
+  margin: 0 auto;
+  border: 1px solid black;
+  padding: 16px;
+  background: #DE572F;
+  border-top: none;
+  cursor: pointer;
+}
+
+.state-2 {
+  display: none;
+}
+
+.take-picture {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */      
+  cursor: pointer;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 100px 0;
+  background-color: rgb(0, 67, 150);
+  border: 1px solid white;
+  color: white;
+  margin-top: 30px;
+  font-size: 42px;
+  font-weight: bold;
+  border-radius: 40px;
+}
+
+.take-picture.disabled {
+  background-color: #777;
+}
