@@ -40,12 +40,17 @@ var Photostrip = {
         this.width = 1280;
         this.height = videoElement.videoHeight / (videoElement.videoWidth/this.width);
 
-        this.canvas.width = this.width;
-        this.canvas.height = this.height * this.length;
+        this.canvas.width = this.width + 80;
+        this.canvas.height = this.height * this.length + 1200;
+
         this.context = this.canvas.getContext('2d');
+
+        this.context.drawImage(window.frameImage, 0, 0, this.canvas.width, this.canvas.height);
       }
 
-      this.context.drawImage(videoElement, 0, this.height*this.count, this.width, this.height);
+      var gutter = 45;
+
+      this.context.drawImage(videoElement, 40, 50+this.height*this.count + (gutter * this.count), this.width, this.height);
 
       var data = this.canvas.toDataURL('image/png');
       this.photo.setAttribute('src', data);
@@ -219,5 +224,10 @@ var BoothClient = {
 };
 
 $(function() {
-  BoothClient.init();
+  window.frameImage = new Image();
+
+  window.frameImage.src = "/assets/images/frame.jpg";
+  window.frameImage.onload = function() {
+    BoothClient.init();
+  };
 });
